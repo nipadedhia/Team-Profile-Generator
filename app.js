@@ -41,8 +41,7 @@ function newEmployee() {
         
         .then((response) => {
 			if (response.role === 'Intern') {
-				inquirer
-					.prompt([
+				inquirer.prompt([
 						{
 							type: 'input',
 							message: 'What school did they attend?',
@@ -57,7 +56,27 @@ function newEmployee() {
 							internData.school
 						);
 						employeeArray.push(intern);
-						});
+                        });
+
+                    } else if (response.role === 'Engineer') {
+                        inquirer.prompt([
+                                {
+                                    type: 'input',
+                                    name: 'github',
+                                    message: 'Enter Github Username:'
+                                }
+                            ])
+                            .then((engineerData) => {
+                                let engineer = new Engineer(
+                                    response.name,
+                                    response.id,
+                                    response.email,
+                                    engineerData.github
+                                );
+                                employeeArray.push(engineer);
+                             });
+                        
+        
 
         newEmployee();
 
