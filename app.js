@@ -11,7 +11,10 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 
-// Write code to use inquirer to gather information about the development team members,
+// Write code to use inquirer to gather information about the development team members
+
+let employeeArray = [];
+
 function newEmployee() {
 	inquirer.prompt([
 			{
@@ -33,7 +36,7 @@ function newEmployee() {
                 type: 'list',
                 name: 'role',
 				message: 'Choose employee role:',
-				choices: ['Engineer', 'Manager', 'Intern']
+				choices: [ 'Manager','Engineer', 'Intern']
 			}
 		])
 
