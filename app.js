@@ -10,8 +10,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-
-// Write code to use inquirer to gather information about the development team members
+// Each employee type (manager, engineer, or intern) has slightly different information; prompting different questions via inquirer depending on employee type.
 
 let employeeArray = [];
 
@@ -36,10 +35,46 @@ function newEmployee() {
                 type: 'list',
                 name: 'role',
 				message: 'Choose employee role:',
-				choices: [ 'Manager','Engineer', 'Intern']
+				choices: [ 'Intern','Engineer', 'Manager']
 			}
-		])
+        ])
+        
+        .then((response) => {
+			if (response.role === 'Intern') {
+				inquirer
+					.prompt([
+						{
+							type: 'input',
+							message: 'What school did they attend?',
+							name: 'school'
+						}
+					])
+					.then((internData) => {
+						let intern = new Intern(
+							response.name,
+							response.id,
+							response.email,
+							internData.school
+						);
+						employeeArray.push(intern);
+						});
 
+        newEmployee();
+
+        async function init() {
+            try {
+              const answers = await newEmployee();
+          
+              const empProfile = newEmployee(answers);
+          
+              await writeFileAsync("TeamProfile.html", empProfile);
+          
+              console.log("Successfully generated");
+            } catch (err) {
+              console.log(err);
+            }
+          }
+          init();
 
 
 // After the user has input all employees desired, call the `render` function (required
@@ -52,9 +87,7 @@ function newEmployee() {
 // Hint: you may need to check if the `output` folder exists and create it if it
 // does not.
 
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
+
 
 // HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
 // and Intern classes should all extend from a class named Employee; see the directions
