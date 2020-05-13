@@ -35,7 +35,7 @@ function newEmployee() {
       {
         type: "list",
         name: "role",
-        message: "Choose employee role:",
+        message: "Select employee role:",
         choices: ["Intern", "Engineer", "Manager"],
       },
     ])
@@ -99,34 +99,39 @@ function newEmployee() {
     });
 }
 
-newEmployee(),
-  async function init() {
-    try {
-      const answers = await newEmployee();
+newEmployee();
 
-      const empProfile = newEmployee(answers);
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "confirm",
+        name: "add",
+        message: "Would you like to add another Employee?",
+      },
+    ])
+    .then((response) => {
+      if (response.add === true) {
+        newEmployee();
+      } else {
+        generateHTML();
+      }
+    });
+}
 
-      await writeFileAsync("TeamProfile.html", empProfile);
+async function init() {
+  console.log("hi");
+  try {
+    const answers = await newEmployee();
 
-      console.log("Successfully generated");
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    const html = generateHTML(answers);
+
+    await writeFileAsync("index.html", html);
+
+    console.log("Successfully wrote to index.html");
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 init();
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templates div for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work)
