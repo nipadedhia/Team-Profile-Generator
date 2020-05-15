@@ -4,6 +4,7 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+const util = require("util");
 
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
@@ -17,6 +18,12 @@ let employeeArray = [];
 function newEmployee() {
   inquirer
     .prompt([
+      {
+        type: "list",
+        name: "role",
+        message: "Select employee role:",
+        choices: ["Intern", "Engineer", "Manager"],
+      },
       {
         type: "input",
         name: "name",
@@ -32,14 +39,9 @@ function newEmployee() {
         name: "email",
         message: "Enter employee email:",
       },
-      {
-        type: "list",
-        name: "role",
-        message: "Select employee role:",
-        choices: ["Intern", "Engineer", "Manager"],
-      },
     ])
 
+    // If selects intern then prompt Intern related Qs
     .then((response) => {
       if (response.role === "Intern") {
         inquirer
@@ -58,7 +60,10 @@ function newEmployee() {
               internData.school
             );
             employeeArray.push(intern);
+            addEmployee();
           });
+
+        // If selects Engineer then prompt Engineer related Qs
       } else if (response.role === "Engineer") {
         inquirer
           .prompt([
@@ -76,7 +81,10 @@ function newEmployee() {
               engineerData.github
             );
             employeeArray.push(engineer);
+            addEmployee();
           });
+
+        // If selects Manager then prompt Manager related Qs
       } else if (response.role === "Manager") {
         inquirer
           .prompt([
@@ -94,13 +102,16 @@ function newEmployee() {
               managerData.officeNumber
             );
             employeeArray.push(manager);
+            addEmployee();
           });
       }
     });
 }
 
+// Calling newEmployee function
 newEmployee();
 
+// Define Add Employee function
 function addEmployee() {
   inquirer
     .prompt([
@@ -119,19 +130,16 @@ function addEmployee() {
     });
 }
 
-async function init() {
-  console.log("hi");
-  try {
-    const answers = await newEmployee();
-
-    const html = generateHTML(answers);
-
-    await writeFileAsync("index.html", html);
-
-    console.log("Successfully wrote to index.html");
-  } catch (err) {
-    console.log(err);
+// ref: Codota.com & with the help of Lawrence Williams
+function generateHTML() {
+  // Check if OUTPUT directory exists
+  if (!fs.existsSync(OUTPUT_DIR)) {
+    // Make OUTPUT directory if does not exists
+    fs.mkdirSync(OUTPUT_DIR);
   }
+  fs.writeFile(outputPath, render(employeeArray), function (err) {
+    if (err) {
+      throw err;
+    }
+  });
 }
-
-init();
